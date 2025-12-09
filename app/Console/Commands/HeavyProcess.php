@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 
 class HeavyProcess extends Command
 {
@@ -23,6 +24,9 @@ class HeavyProcess extends Command
     private function query()
     {
         return cache()->remember('hp_result', 10, function(){
+            // while(true) {
+            //     sleep(5);
+            // }
             sleep(5);
 
             return 1400;
@@ -34,10 +38,14 @@ class HeavyProcess extends Command
      */
     public function handle()
     {
-        cache()->lock('hp_lock')->block(10, function() {
-            $res = $this->query();
-    
-            $this->info($res);
-        });
+        try {
+            cache()->lock('hp_lock')->block(10, function() {
+                $res = $this->query();
+        
+                $this->info($res);
+            });
+        } catch(LockTimeoutException $e) {
+            $this->error(get_class($e));
+        }
     }
 }
