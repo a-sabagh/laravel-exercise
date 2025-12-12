@@ -44,8 +44,6 @@ class AcquireLock extends Command
             sleep(3);
 
             $this->error(' lock have been acquire  😵‍💫');
-
-            continue;
         }
 
         $this->info('Now foo lock has been released from external process 🤩');
