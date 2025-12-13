@@ -17,6 +17,13 @@ return new class extends Migration
             $table->integer('expiration');
         });
 
+        //settings
+        Schema::create('settings', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
         Schema::create('cache_locks', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->string('owner');
