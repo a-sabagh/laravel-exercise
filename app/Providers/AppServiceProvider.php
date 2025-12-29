@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\ProductCacheRepo;
+use App\Repositories\ProductRepository;
 use Illuminate\Cache\Events\CacheHit;
 use Illuminate\Cache\Events\CacheMissed;
 use Illuminate\Cache\Events\KeyWritten;
@@ -24,16 +26,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(function(CacheMissed $event){
-            Log::info('cache missed: ' . $event->key);
+        $this->app->singleton(ProductRepository::class, function () {
+            return resolve(ProductCacheRepo::class);
         });
 
-        Event::listen(function(KeyWritten $event){
-            Log::info('cache key written: ' . $event->key);
-        });
+        // Event::listen(function(CacheMissed $event){
+        //     Log::info('cache missed: ' . $event->key);
+        // });
 
-        Event::listen(function(CacheHit $event){
-            Log::info('cache hit: ' . $event->key);
+        // Event::listen(function(KeyWritten $event){
+        //     Log::info('cache key written: ' . $event->key);
+        // });
+
+        // Event::listen(function(CacheHit $event){
+        //     Log::info('cache hit: ' . $event->key);
+        // });
+
+        Event::listen('query_hit', function () {
+            Log::info('query hit');
         });
     }
 }
